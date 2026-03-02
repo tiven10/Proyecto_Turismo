@@ -57,3 +57,30 @@ async function getPokemon() {
   console.log(`✅ ${pokemonList.length} Pokémon obtenidos:`, pokemonList);
   return pokemonList;
 }
+// Feature 3 – Manejo y procesamiento de datos
+
+function procesarPokemon(lista) {
+  return lista.map(pokemon => ({
+    ...pokemon,
+    name: pokemon.name.toUpperCase(), // transformación
+    tipoPrincipal: pokemon.types[0],  // primer tipo
+    poderTotal:
+      pokemon.stats.HP +
+      pokemon.stats.ATK +
+      pokemon.stats.DEF +
+      pokemon.stats.SPD
+  }));
+}
+
+async function init() {
+  try {
+    const pokemons = await getPokemon();
+    const procesados = procesarPokemon(pokemons);
+
+    console.log("Pokémon procesados:", procesados);
+  } catch (error) {
+    console.error("Error en la aplicación:", error);
+  }
+}
+
+init();
