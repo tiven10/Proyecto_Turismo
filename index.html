@@ -8,23 +8,23 @@
   
   <style>
     body {
-      background-color: #eef2f3; 
+      background-color: #eef2f3;
       padding-top: 50px;
     }
 
     .pokemon-card {
       border-radius: 15px;
-      transition: transform 0.2s; /* Para que se mueva suave al pasar el mouse*/
+      transition: transform 0.2s;
       border: none;
     }
 
     .pokemon-card:hover {
-      transform: scale(1.05); /* Se agranda un poquito */
+      transform: scale(1.05);
       box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
     .img-bg {
-      background-color: #f8f9fa; /* Fondo gris clarito para la foto */
+      background-color: #f8f9fa;
       border-radius: 15px 15px 0 0;
       padding: 20px;
     }
@@ -40,56 +40,15 @@
   <div class="container">
     <h1 class="text-center mb-5">Pokemones</h1>
 
-    <div class="row g-4">
-      
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card pokemon-card h-100 shadow-sm">
-          <div class="img-bg text-center">
-            <img src="" class="card-img-top w-75" alt="Pikachu">
-          </div>
-          <div class="card-body text-center">
-            <h5 class="card-title">Pikachu</h5>
-            <span class="badge bg-warning text-dark">Eléctrico</span>
-          </div>
-        </div>
-      </div>
+    <!-- Feature 4 – Eilin: contenedor con id para que JS pueda insertar las cards -->
+    <div class="row g-4" id="pokemon-container">
+      <!-- Las cards se generan dinámicamente desde app.js -->
+    </div>
 
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card pokemon-card h-100 shadow-sm">
-          <div class="img-bg text-center">
-            <img src="" class="card-img-top w-75" alt="Charmander">
-          </div>
-          <div class="card-body text-center">
-            <h5 class="card-title">Charmander</h5>
-            <span class="badge bg-danger">Fuego</span>
-          </div>
-        </div>
-      </div>
+  </div>
 
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card pokemon-card h-100 shadow-sm">
-          <div class="img-bg text-center">
-            <img src="" class="card-img-top w-75" alt="Squirtle">
-          </div>
-          <div class="card-body text-center">
-            <h5 class="card-title">Squirtle</h5>
-            <span class="badge bg-primary">Agua</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card pokemon-card h-100 shadow-sm">
-          <div class="img-bg text-center">
-            <img src="" class="card-img-top w-75" alt="Bulbasaur">
-          </div>
-          <div class="card-body text-center">
-            <h5 class="card-title">Bulbasaur</h5>
-            <span class="badge bg-success">Planta</span>
-          </div>
-        </div>
-      </div>
-
-    </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Referencia al archivo JS del proyecto -->
+  <script src="app.js"></script>
 </body>
 </html>
