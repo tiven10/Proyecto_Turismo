@@ -1,11 +1,16 @@
 /**
- * pokemonService.js
- * Feature 2 – Consumo de la API Pokémon
+ * app.js
+ * Proyecto: Mi PokéDex
  *
- * Función principal: getPokemon()
- * Conecta con la PokéAPI y obtiene exactamente 10 Pokémon
- * con sus detalles completos (imagen, tipos, stats).
+ * Estructura:
+ *   - Feature 2 – Consumo de la API Pokémon        (Arturo)
+ *   - Feature 3 – Manejo y procesamiento de datos  (Martín)
+ *   - Feature 5 – Renderizado final                (Thomas)
  */
+
+// ─────────────────────────────────────────────────────────────
+// Feature 2 – Consumo de la API Pokémon (Arturo)
+// ─────────────────────────────────────────────────────────────
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
 const POKEMON_LIMIT = 10;
@@ -57,30 +62,134 @@ async function getPokemon() {
   console.log(`✅ ${pokemonList.length} Pokémon obtenidos:`, pokemonList);
   return pokemonList;
 }
-// Feature 3 – Manejo y procesamiento de datos
 
-function procesarPokemon(lista) {
-  return lista.map(pokemon => ({
-    ...pokemon,
-    name: pokemon.name.toUpperCase(), // transformación
-    tipoPrincipal: pokemon.types[0],  // primer tipo
-    poderTotal:
-      pokemon.stats.HP +
-      pokemon.stats.ATK +
-      pokemon.stats.DEF +
-      pokemon.stats.SPD
-  }));
+
+// ─────────────────────────────────────────────────────────────
+// Feature 3 – Manejo y procesamiento de datos (Martín)
+// ─────────────────────────────────────────────────────────────
+
+// Mapeo de tipos en inglés → español y color de badge Bootstrap
+const TYPE_CONFIG = {
+  normal:   { label: 'Normal',     badge: 'bg-secondary'          },
+  fire:     { label: 'Fuego',      badge: 'bg-danger'             },
+  water:    { label: 'Agua',       badge: 'bg-primary'            },
+  grass:    { label: 'Planta',     badge: 'bg-success'            },
+  electric: { label: 'Eléctrico',  badge: 'bg-warning text-dark'  },
+  ice:      { label: 'Hielo',      badge: 'bg-info text-dark'     },
+  fighting: { label: 'Lucha',      badge: 'bg-danger'             },
+  poison:   { label: 'Veneno',     badge: 'bg-purple text-white'  },
+  ground:   { label: 'Tierra',     badge: 'bg-warning text-dark'  },
+  flying:   { label: 'Volador',    badge: 'bg-info text-dark'     },
+  psychic:  { label: 'Psíquico',   badge: 'bg-pink text-white'    },
+  bug:      { label: 'Bicho',      badge: 'bg-success'            },
+  rock:     { label: 'Roca',       badge: 'bg-secondary'          },
+  ghost:    { label: 'Fantasma',   badge: 'bg-dark text-white'    },
+  dragon:   { label: 'Dragón',     badge: 'bg-primary'            },
+  dark:     { label: 'Siniestro',  badge: 'bg-dark text-white'    },
+  steel:    { label: 'Acero',      badge: 'bg-secondary'          },
+  fairy:    { label: 'Hada',       badge: 'bg-pink text-white'    },
+};
+
+/**
+ * Recibe un objeto pokémon y retorna el HTML completo de una card Bootstrap.
+ * @param {Object} pokemon - Objeto con id, name, image, types, stats, height, weight
+ * @returns {string} HTML de la card lista para insertar en el DOM
+ */
+function buildCardHTML(pokemon) {
+  // Generar los badges de tipo
+  const badges = pokemon.types.map(type => {
+    const config = TYPE_CONFIG[type] || { label: type, badge: 'bg-secondary' };
+    return `<span class="badge ${config.badge} me-1">${config.label}</span>`;
+  }).join('');
+
+  // Formatear número de pokémon con ceros: 1 → #001
+  const formattedId = `#${String(pokemon.id).padStart(3, '0')}`;
+
+  // Convertir altura y peso a unidades legibles
+  const heightM  = (pokemon.height / 10).toFixed(1);  // decímetros → metros
+  const weightKg = (pokemon.weight / 10).toFixed(1);  // hectogramos → kg
+
+  return `
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card pokemon-card h-100 shadow-sm">
+
+        <div class="img-bg text-center">
+          <img
+            src="${pokemon.image}"
+            class="card-img-top w-75"
+            alt="${pokemon.name}"
+          >
+        </div>
+
+        <div class="card-body text-center">
+          <p class="text-muted mb-1 small">${formattedId}</p>
+          <h5 class="card-title">${pokemon.name}</h5>
+          <div class="mb-3">${badges}</div>
+
+          <div class="d-flex justify-content-around text-muted small mb-2">
+            <span>📏 ${heightM} m</span>
+            <span>⚖️ ${weightKg} kg</span>
+          </div>
+
+          <hr class="my-2">
+
+          <div class="d-flex justify-content-around small fw-bold">
+            <span title="HP">❤️ ${pokemon.stats.HP}</span>
+            <span title="Ataque">⚔️ ${pokemon.stats.ATK}</span>
+            <span title="Defensa">🛡️ ${pokemon.stats.DEF}</span>
+            <span title="Velocidad">💨 ${pokemon.stats.SPD}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
 }
 
-async function init() {
-  try {
-    const pokemons = await getPokemon();
-    const procesados = procesarPokemon(pokemons);
 
-    console.log("Pokémon procesados:", procesados);
+// ─────────────────────────────────────────────────────────────
+// Feature 5 – Renderizado final (Thomas)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Función principal: trae los pokémon, construye las cards y las renderiza
+ * en el contenedor #pokemon-container del HTML.
+ */
+async function renderPokemon() {
+  const container = document.getElementById('pokemon-container');
+
+  // Mostrar spinner de carga mientras llega la data
+  container.innerHTML = `
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-danger" role="status" style="width: 3rem; height: 3rem;"></div>
+      <p class="mt-3 text-muted">Cargando Pokémon...</p>
+    </div>
+  `;
+
+  try {
+    // 1. Traer los datos desde la API (Feature 2 - Arturo)
+    const pokemonList = await getPokemon();
+
+    // 2. Construir el HTML de cada card (Feature 3 - Martín)
+    const cardsHTML = pokemonList.map(pokemon => buildCardHTML(pokemon)).join('');
+
+    // 3. Insertar todas las cards en el contenedor del HTML (Feature 4 - Eilin)
+    container.innerHTML = cardsHTML;
+
+    console.log(`✅ ${pokemonList.length} cards renderizadas correctamente.`);
+
   } catch (error) {
-    console.error("Error en la aplicación:", error);
+    // Mostrar mensaje de error si algo falla
+    container.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-danger text-center" role="alert">
+          ❌ Error al cargar los Pokémon: ${error.message}
+        </div>
+      </div>
+    `;
+    console.error('Error en renderPokemon:', error);
   }
 }
 
-init();
+// Ejecutar renderPokemon() cuando el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', renderPokemon);
